@@ -74,6 +74,7 @@ namespace Zenva.VR
 
         void Awake()
         {
+            // init devices list
             devices = new List<InputDevice>();
 
             // 2a get lable
