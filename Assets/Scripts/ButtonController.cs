@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.XR;
 
 namespace Zenva.VR
@@ -30,6 +31,17 @@ namespace Zenva.VR
         [Tooltip("Select an input feature")]
         [SerializeField]
         private FeatureOptions feature;
+        
+        [Tooltip("Event when the button starts being pressed")]
+        [SerializeField]
+        private UnityEvent OnPress;
+                
+        [Tooltip("Event when the button starts being pressed")]
+        [SerializeField]
+        private UnityEvent OnRelease;
+
+        // keep track if button is pressed
+        bool isPressed;
 
         // ------ 2) find the object that corresponds to that label --------------------------
         static readonly Dictionary<string, InputFeatureUsage<bool>> availableFeatures = new Dictionary<string, InputFeatureUsage<bool>>
@@ -84,8 +96,23 @@ namespace Zenva.VR
                 // 2) the button's value should be true
                 if (devices[i].TryGetFeatureValue(selectedFeature, out inputValue) && inputValue)
                 {
-                    // say hello in the console
-                    Debug.Log("Hello");
+                    // check if we are already pressing
+                    if(!isPressed)
+                    {
+                        // update flag
+                        isPressed = true;
+
+                        // trigger OnPress event
+                        OnPress.Invoke();
+                    }
+                    
+                }
+                else if (isPressed)
+                {
+                    isPressed = false;
+
+                    // trigger the OnRelease event
+                    OnRelease.Invoke();
                 }
             }
 
